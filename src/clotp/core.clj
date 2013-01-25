@@ -1,4 +1,5 @@
-(ns clotp.core)
+(ns clotp.core
+  (:require [clojure.core.match :refer [match]]))
 
 (def next-process-id (atom 0))
 (def processes (atom {}))
@@ -18,11 +19,16 @@
 (defn ? [pid]
   (.take (get @processes pid)))
 
-(defn my-process [self]
-  (let [message (? self)]
-    (println message)))
+(defn counter [self]
+  (let [[n pid] (? self)]
+    (match [n]
+           [0]   (println "Done!")
+           :else (do (println n)
+                     (! pid [(dec n) self]))))
+  (recur self))
 
-(def pid (spawn my-process))
-(! pid "Message hereee")
-(! pid "Message hereeedsf")
+(def a (spawn counter))
+(def b (spawn counter))
+
+(! a [10 b])
 
