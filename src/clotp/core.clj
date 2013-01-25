@@ -24,8 +24,8 @@
     (match [n]
            [0]   (println "Done!")
            :else (do (println n)
-                     (! pid [(dec n) self]))))
-  (recur self))
+                     (! pid [(dec n) self])
+                     (recur self)))))
 
 (def a (spawn counter))
 (def b (spawn counter))
